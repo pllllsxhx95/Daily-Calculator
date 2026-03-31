@@ -1,6 +1,5 @@
 :root {
   --bg: #0b1020;
-  --bg-soft: #11182d;
   --surface: rgba(255, 255, 255, 0.9);
   --surface-strong: rgba(255, 255, 255, 0.98);
   --text: #101828;
@@ -23,13 +22,13 @@
 html, body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
   font-family: "Inter", system-ui, sans-serif;
   background:
     radial-gradient(circle at top left, rgba(99, 102, 241, 0.24), transparent 30%),
     radial-gradient(circle at top right, rgba(16, 185, 129, 0.18), transparent 28%),
     linear-gradient(180deg, #0b1020 0%, #0f172a 100%);
   color: var(--text);
-  min-height: 100%;
 }
 
 body {
@@ -38,7 +37,7 @@ body {
 
 .app-shell {
   width: 100%;
-  max-width: 980px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 
@@ -140,9 +139,10 @@ label {
 }
 
 input,
-select {
+select,
+.placeholder-box {
   width: 100%;
-  height: 52px;
+  min-height: 52px;
   border-radius: 16px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,0.88);
@@ -150,6 +150,18 @@ select {
   font-size: 16px;
   outline: none;
   transition: 0.2s ease;
+}
+
+input,
+select {
+  height: 52px;
+}
+
+.placeholder-box {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  line-height: 1.4;
 }
 
 input:focus,
@@ -189,7 +201,8 @@ select:focus {
 .stat-box strong {
   font-size: 22px;
   font-weight: 800;
-  line-height: 1.15;
+  line-height: 1.2;
+  word-break: keep-all;
 }
 
 .highlight-panel {
@@ -320,6 +333,10 @@ button {
   transform: translateY(-1px);
 }
 
+.single-row {
+  grid-template-columns: 1fr;
+}
+
 .info-text {
   margin: 14px 0 0;
   font-size: 13px;
@@ -361,5 +378,9 @@ code {
 
   .button-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .single-row {
+    grid-template-columns: 1fr;
   }
 }
