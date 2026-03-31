@@ -248,8 +248,9 @@ function calculateProtein() {
   const proteinTarget = Number(data.proteinTarget || 0);
   const selectedDate = proteinLogDateInput.value || todayStr();
 
-  const todayProteinLogs = (data.proteinLogs || []).filter(log => log.date === selectedDate);
-  const proteinConsumed = todayProteinLogs.reduce((sum, log) => sum + Number(log.amount || 0), 0);
+  const accumulatedProteinLogs = (data.proteinLogs || []).filter(log => log.date <= selectedDate);
+  const proteinConsumed = accumulatedProteinLogs.reduce((sum, log) => sum + Number(log.amount || 0), 0);
+
   const proteinRemaining = Math.max(proteinTarget - proteinConsumed, 0);
   const proteinRate = proteinTarget > 0 ? Math.min((proteinConsumed / proteinTarget) * 100, 999) : 0;
   const progressWidth = Math.min(proteinRate, 100);
