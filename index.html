@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget & Protein Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Personal Daily Tracker</p>
+        <h1>예산 · 단백질 관리</h1>
+        <p class="topbar-desc">사용자를 선택하고 오늘 기준 수치를 확인하세요.</p>
+      </div>
+      <div class="today-chip" id="todayChip">-</div>
+    </header>
+
+    <main class="main-grid">
+      <section class="card hero-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">사용자</p>
+            <h2>프로필 선택</h2>
+          </div>
+          <button class="ghost-btn" id="refreshUsersBtn" type="button">새로고침</button>
+        </div>
+
+        <div class="input-group">
+          <label for="userSelect">사용자 목록</label>
+          <select id="userSelect"></select>
+        </div>
+
+        <div class="hero-summary">
+          <div class="mini-stat">
+            <span class="mini-stat-label">선택 사용자</span>
+            <strong id="selectedUserName">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="mini-stat-label">남은 예산</span>
+            <strong id="heroRemainingBudget">-</strong>
+          </div>
+          <div class="mini-stat">
+            <span class="mini-stat-label">단백질 달성률</span>
+            <strong id="heroProteinRate">-</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Budget</p>
+            <h2>1일 예산 계산</h2>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="monthlyBudget">월 예산 (원)</label>
+            <input id="monthlyBudget" type="number" inputmode="numeric" placeholder="예: 500000" />
+          </div>
+
+          <div class="input-group">
+            <label for="usedAmount">현재까지 사용 금액 (원)</label>
+            <input id="usedAmount" type="number" inputmode="numeric" placeholder="예: 120000" />
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span>이번 달 일수</span>
+            <strong id="daysInMonth">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>남은 일수</span>
+            <strong id="remainingDays">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>남은 예산</span>
+            <strong id="remainingBudget">-</strong>
+          </div>
+        </div>
+
+        <div class="highlight-panel budget-panel">
+          <span class="highlight-label">하루 사용 가능 금액</span>
+          <strong id="dailyBudget">-</strong>
+          <p>남은 예산을 오늘 포함 남은 일수로 나눈 값입니다.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Protein</p>
+            <h2>단백질 목표 관리</h2>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="proteinTarget">목표 단백질 (g)</label>
+            <input id="proteinTarget" type="number" inputmode="decimal" placeholder="예: 140" />
+          </div>
+
+          <div class="input-group">
+            <label for="proteinConsumed">섭취한 단백질 (g)</label>
+            <input id="proteinConsumed" type="number" inputmode="decimal" placeholder="예: 82" />
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span>목표량</span>
+            <strong id="proteinTargetView">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>섭취량</span>
+            <strong id="proteinConsumedView">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>남은 단백질</span>
+            <strong id="proteinRemaining">-</strong>
+          </div>
+        </div>
+
+        <div class="highlight-panel protein-panel">
+          <div class="progress-head">
+            <span class="highlight-label">달성률</span>
+            <strong id="proteinRate">-</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="proteinProgress"></div>
+          </div>
+          <p>목표량 대비 현재 섭취량 기준입니다.</p>
+        </div>
+      </section>
+
+      <section class="card action-card">
+        <div class="card-header">
+          <div>
+            <p class="section-label">Action</p>
+            <h2>데이터 관리</h2>
+          </div>
+        </div>
+
+        <div class="button-row">
+          <button class="primary-btn" id="saveBtn" type="button">현재 사용자 데이터 저장</button>
+          <button class="secondary-btn" id="resetBtn" type="button">현재 사용자 입력 초기화</button>
+        </div>
+
+        <p class="info-text">
+          사용자 목록은 <code>users.json</code> 에서 읽고, 실제 입력값은 각 기기의 브라우저에 저장됩니다.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
