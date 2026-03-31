@@ -384,3 +384,38 @@ code {
     grid-template-columns: 1fr;
   }
 }
+.hidden-block {
+  display: none;
+}
+
+.summary-inline {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-chip {
+  background: rgba(248, 250, 252, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  border-radius: 18px;
+  padding: 14px 16px;
+}
+
+.summary-chip span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.summary-chip strong {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+@media (min-width: 720px) {
+  .summary-inline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
