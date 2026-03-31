@@ -82,11 +82,14 @@ function parseLocalDate(dateString) {
 }
 
 function formatDateKorean(date) {
-  return date.toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).replace(/\.\s/g, ".").replace(/\.$/, "");
+  return date
+    .toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    })
+    .replace(/\.\s/g, ".")
+    .replace(/\.$/, "");
 }
 
 function clampPayday(year, monthZeroBased, payday) {
@@ -168,6 +171,8 @@ function setSelectedUserData(data) {
 
 function setTodayChip() {
   const now = new Date();
+  if (!todayChipEl) return;
+
   todayChipEl.textContent = now.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -178,25 +183,36 @@ function setTodayChip() {
 
 function setDefaultDates() {
   const t = todayStr();
-  budgetLogDateInput.value = t;
-  proteinLogDateInput.value = t;
+  if (budgetLogDateInput) budgetLogDateInput.value = t;
+  if (proteinLogDateInput) proteinLogDateInput.value = t;
 }
 
 function updateSettingsVisibility() {
   const data = getSelectedUserData();
 
-  const hasBudgetSettings = Number(data.monthlyBudget || 0) > 0 && Number(data.payday || 0) > 0;
+  const hasBudgetSettings =
+    Number(data.monthlyBudget || 0) > 0 && Number(data.payday || 0) > 0;
   const hasProteinSettings = Number(data.proteinTarget || 0) > 0;
 
-  if (budgetSettingsForm) budgetSettingsForm.style.display = hasBudgetSettings ? "none" : "block";
-  if (budgetEditWrap) budgetEditWrap.style.display = hasBudgetSettings ? "grid" : "none";
+  if (budgetSetupSummaryEl) {
+    budgetSetupSummaryEl.textContent = hasBudgetSettings
+      ? formatCurrency(data.monthlyBudget)
+      : "-";
+  }
 
-  if (proteinSettingsForm) proteinSettingsForm.style.display = hasProteinSettings ? "none" : "block";
-  if (proteinEditWrap) proteinEditWrap.style.display = hasProteinSettings ? "grid" : "none";
+  if (paydaySummaryEl) {
+    paydaySummaryEl.textContent = hasBudgetSettings ? `${data.payday}일` : "-";
+  }
 
-  if (budgetSetupSummaryEl) budgetSetupSummaryEl.textContent = hasBudgetSettings ? formatCurrency(data.monthlyBudget) : "-";
-  if (paydaySummaryEl) paydaySummaryEl.textContent = hasBudgetSettings ? `${data.payday}일` : "-";
-  if (proteinTargetSummaryEl) proteinTargetSummaryEl.textContent = hasProteinSettings ? formatGram(data.proteinTarget) : "-";
+  if (proteinTargetSummaryEl) {
+    proteinTargetSummaryEl.textContent = hasProteinSettings
+      ? formatGram(data.proteinTarget)
+      : "-";
+  }
+
+  // 중요:
+  // 접기/펼치기는 HTML <details>가 담당하도록 하고
+  // JS에서는 form / editWrap display를 건드리지 않음
 }
 
 function openBudgetSettingsForm() {
@@ -210,6 +226,8 @@ function openProteinSettingsForm() {
 }
 
 function populateUsers() {
+  if (!userSelect) return;
+
   userSelect.innerHTML = "";
 
   if (!users.length) {
@@ -238,10 +256,13 @@ function updateInputsFromSelectedUser() {
   const currentUser = users.find((u) => u.id === selectedUserId);
   const saved = getSelectedUserData();
 
-  selectedUserNameEl.textContent = currentUser ? currentUser.name : "-";
-  monthlyBudgetInput.value = saved.monthlyBudget ?? "";
-  paydayInput.value = saved.payday ?? "";
-  proteinTargetInput.value = saved.proteinTarget ?? "";
+  if (selectedUserNameEl) {
+    selectedUserNameEl.textContent = currentUser ? currentUser.name : "-";
+  }
+
+  if (monthlyBudgetInput) monthlyBudgetInput.value = saved.monthlyBudget ?? "";
+  if (paydayInput) paydayInput.value = saved.payday ?? "";
+  if (proteinTargetInput) proteinTargetInput.value = saved.proteinTarget ?? "";
 
   updateSettingsVisibility();
   calculateAll();
@@ -252,57 +273,83 @@ function calculateBudget() {
   const monthlyBudget = Number(data.monthlyBudget || 0);
   const payday = Number(data.payday || 1);
 
-  monthlyBudgetViewEl.textContent = formatCurrency(monthlyBudget);
+  if (monthlyBudgetViewEl) {
+    monthlyBudgetViewEl.textContent = formatCurrency(monthlyBudget);
+  }
 
   if (!monthlyBudget || !payday) {
-    budgetPeriodEl.textContent = "-";
-    remainingDaysEl.textContent = "-";
-    budgetUsedTotalEl.textContent = "-";
-    dailyBudgetEl.textContent = "-";
-    remainingBudgetEl.textContent = "-";
-    heroRemainingBudgetEl.textContent = "-";
-    budgetLogCountEl.textContent = "0건";
+    if (budgetPeriodEl) budgetPeriodEl.textContent = "-";
+    if (remainingDaysEl) remainingDaysEl.textContent = "-";
+    if (budgetUsedTotalEl) budgetUsedTotalEl.textContent = "-";
+    if (dailyBudgetEl) dailyBudgetEl.textContent = "-";
+    if (remainingBudgetEl) remainingBudgetEl.textContent = "-";
+    if (heroRemainingBudgetEl) heroRemainingBudgetEl.textContent = "-";
+    if (budgetLogCountEl) budgetLogCountEl.textContent = "0건";
     return;
   }
 
   const cycle = getCycleRange(payday, new Date());
-  const cycleStartStr = `${cycle.start.getFullYear()}-${String(cycle.start.getMonth() + 1).padStart(2, "0")}-${String(cycle.start.getDate()).padStart(2, "0")}`;
-  const cycleEndStr = `${cycle.end.getFullYear()}-${String(cycle.end.getMonth() + 1).padStart(2, "0")}-${String(cycle.end.getDate()).padStart(2, "0")}`;
+  const cycleStartStr = `${cycle.start.getFullYear()}-${String(
+    cycle.start.getMonth() + 1
+  ).padStart(2, "0")}-${String(cycle.start.getDate()).padStart(2, "0")}`;
+  const cycleEndStr = `${cycle.end.getFullYear()}-${String(
+    cycle.end.getMonth() + 1
+  ).padStart(2, "0")}-${String(cycle.end.getDate()).padStart(2, "0")}`;
 
-  const cycleLogs = (data.budgetLogs || []).filter((log) => log.date >= cycleStartStr && log.date <= cycleEndStr);
-  const usedTotal = cycleLogs.reduce((sum, log) => sum + Number(log.amount || 0), 0);
+  const cycleLogs = (data.budgetLogs || []).filter(
+    (log) => log.date >= cycleStartStr && log.date <= cycleEndStr
+  );
+
+  const usedTotal = cycleLogs.reduce(
+    (sum, log) => sum + Number(log.amount || 0),
+    0
+  );
+
   const remainingBudget = Math.max(monthlyBudget - usedTotal, 0);
 
   const today = parseLocalDate(todayStr());
   const remainingDays = Math.max(daysBetweenInclusive(today, new Date(cycle.end)), 1);
   const dailyBudget = Math.floor(remainingBudget / remainingDays);
 
-  budgetPeriodEl.textContent = `${formatDateKorean(cycle.start)} ~ ${formatDateKorean(cycle.end)}`;
-  remainingDaysEl.textContent = `${remainingDays}일`;
-  budgetUsedTotalEl.textContent = formatCurrency(usedTotal);
-  remainingBudgetEl.textContent = formatCurrency(remainingBudget);
-  dailyBudgetEl.textContent = formatCurrency(dailyBudget);
-  heroRemainingBudgetEl.textContent = formatCurrency(remainingBudget);
-  budgetLogCountEl.textContent = `${cycleLogs.length}건`;
+  if (budgetPeriodEl) {
+    budgetPeriodEl.textContent = `${formatDateKorean(cycle.start)} ~ ${formatDateKorean(
+      cycle.end
+    )}`;
+  }
+  if (remainingDaysEl) remainingDaysEl.textContent = `${remainingDays}일`;
+  if (budgetUsedTotalEl) budgetUsedTotalEl.textContent = formatCurrency(usedTotal);
+  if (remainingBudgetEl) remainingBudgetEl.textContent = formatCurrency(remainingBudget);
+  if (dailyBudgetEl) dailyBudgetEl.textContent = formatCurrency(dailyBudget);
+  if (heroRemainingBudgetEl) heroRemainingBudgetEl.textContent = formatCurrency(remainingBudget);
+  if (budgetLogCountEl) budgetLogCountEl.textContent = `${cycleLogs.length}건`;
 }
 
 function calculateProtein() {
   const data = getSelectedUserData();
   const proteinTarget = Number(data.proteinTarget || 0);
-  const selectedDate = proteinLogDateInput.value || todayStr();
+  const selectedDate = proteinLogDateInput?.value || todayStr();
 
-  const todayProteinLogs = (data.proteinLogs || []).filter((log) => log.date === selectedDate);
-  const proteinConsumed = todayProteinLogs.reduce((sum, log) => sum + Number(log.amount || 0), 0);
+  const todayProteinLogs = (data.proteinLogs || []).filter(
+    (log) => log.date === selectedDate
+  );
+
+  const proteinConsumed = todayProteinLogs.reduce(
+    (sum, log) => sum + Number(log.amount || 0),
+    0
+  );
+
   const proteinRemaining = Math.max(proteinTarget - proteinConsumed, 0);
-  const proteinRate = proteinTarget > 0 ? Math.min((proteinConsumed / proteinTarget) * 100, 999) : 0;
+  const proteinRate = proteinTarget > 0
+    ? Math.min((proteinConsumed / proteinTarget) * 100, 999)
+    : 0;
   const progressWidth = Math.min(proteinRate, 100);
 
-  proteinTargetViewEl.textContent = formatGram(proteinTarget);
-  proteinConsumedViewEl.textContent = formatGram(proteinConsumed);
-  proteinRemainingEl.textContent = formatGram(proteinRemaining);
-  proteinRateEl.textContent = formatPercent(proteinRate);
-  heroProteinRateEl.textContent = formatPercent(proteinRate);
-  proteinProgressEl.style.width = `${progressWidth}%`;
+  if (proteinTargetViewEl) proteinTargetViewEl.textContent = formatGram(proteinTarget);
+  if (proteinConsumedViewEl) proteinConsumedViewEl.textContent = formatGram(proteinConsumed);
+  if (proteinRemainingEl) proteinRemainingEl.textContent = formatGram(proteinRemaining);
+  if (proteinRateEl) proteinRateEl.textContent = formatPercent(proteinRate);
+  if (heroProteinRateEl) heroProteinRateEl.textContent = formatPercent(proteinRate);
+  if (proteinProgressEl) proteinProgressEl.style.width = `${progressWidth}%`;
 }
 
 function calculateAll() {
@@ -314,8 +361,8 @@ function saveBudgetSettings() {
   if (!selectedUserId) return;
 
   const current = getSelectedUserData();
-  const monthlyBudget = monthlyBudgetInput.value;
-  const payday = paydayInput.value;
+  const monthlyBudget = monthlyBudgetInput?.value;
+  const payday = paydayInput?.value;
 
   if (!monthlyBudget || Number(monthlyBudget) <= 0) {
     alert("월 예산을 입력해주세요.");
@@ -341,8 +388,8 @@ function saveBudgetSettings() {
 function addBudgetLog() {
   if (!selectedUserId) return;
 
-  const amount = Number(budgetLogAmountInput.value || 0);
-  const date = budgetLogDateInput.value || todayStr();
+  const amount = Number(budgetLogAmountInput?.value || 0);
+  const date = budgetLogDateInput?.value || todayStr();
 
   if (amount <= 0) {
     alert("사용 금액을 입력해주세요.");
@@ -359,7 +406,7 @@ function addBudgetLog() {
     budgetLogs
   });
 
-  budgetLogAmountInput.value = "";
+  if (budgetLogAmountInput) budgetLogAmountInput.value = "";
   calculateAll();
   alert("지출이 추가되었습니다.");
 }
@@ -376,10 +423,16 @@ function clearBudgetCycle() {
   }
 
   const cycle = getCycleRange(payday, new Date());
-  const cycleStartStr = `${cycle.start.getFullYear()}-${String(cycle.start.getMonth() + 1).padStart(2, "0")}-${String(cycle.start.getDate()).padStart(2, "0")}`;
-  const cycleEndStr = `${cycle.end.getFullYear()}-${String(cycle.end.getMonth() + 1).padStart(2, "0")}-${String(cycle.end.getDate()).padStart(2, "0")}`;
+  const cycleStartStr = `${cycle.start.getFullYear()}-${String(
+    cycle.start.getMonth() + 1
+  ).padStart(2, "0")}-${String(cycle.start.getDate()).padStart(2, "0")}`;
+  const cycleEndStr = `${cycle.end.getFullYear()}-${String(
+    cycle.end.getMonth() + 1
+  ).padStart(2, "0")}-${String(cycle.end.getDate()).padStart(2, "0")}`;
 
-  const remainLogs = (current.budgetLogs || []).filter((log) => !(log.date >= cycleStartStr && log.date <= cycleEndStr));
+  const remainLogs = (current.budgetLogs || []).filter(
+    (log) => !(log.date >= cycleStartStr && log.date <= cycleEndStr)
+  );
 
   setSelectedUserData({
     ...current,
@@ -394,7 +447,7 @@ function saveProteinSettings() {
   if (!selectedUserId) return;
 
   const current = getSelectedUserData();
-  const proteinTarget = proteinTargetInput.value;
+  const proteinTarget = proteinTargetInput?.value;
 
   if (!proteinTarget || Number(proteinTarget) <= 0) {
     alert("단백질 목표량을 입력해주세요.");
@@ -414,8 +467,8 @@ function saveProteinSettings() {
 function addProteinLog() {
   if (!selectedUserId) return;
 
-  const amount = Number(proteinLogAmountInput.value || 0);
-  const date = proteinLogDateInput.value || todayStr();
+  const amount = Number(proteinLogAmountInput?.value || 0);
+  const date = proteinLogDateInput?.value || todayStr();
 
   if (amount <= 0) {
     alert("섭취량을 입력해주세요.");
@@ -432,7 +485,7 @@ function addProteinLog() {
     proteinLogs
   });
 
-  proteinLogAmountInput.value = "";
+  if (proteinLogAmountInput) proteinLogAmountInput.value = "";
   calculateAll();
   alert("단백질 섭취량이 추가되었습니다.");
 }
@@ -440,7 +493,7 @@ function addProteinLog() {
 function clearProteinForSelectedDate() {
   if (!selectedUserId) return;
 
-  const selectedDate = proteinLogDateInput.value || todayStr();
+  const selectedDate = proteinLogDateInput?.value || todayStr();
   const current = getSelectedUserData();
 
   setSelectedUserData({
@@ -466,24 +519,40 @@ async function loadUsers() {
     console.error(error);
     users = [];
     populateUsers();
-    selectedUserNameEl.textContent = "불러오기 실패";
+    if (selectedUserNameEl) {
+      selectedUserNameEl.textContent = "불러오기 실패";
+    }
   }
 }
 
-userSelect.addEventListener("change", () => {
-  selectedUserId = userSelect.value;
-  updateInputsFromSelectedUser();
-});
+if (userSelect) {
+  userSelect.addEventListener("change", () => {
+    selectedUserId = userSelect.value;
+    updateInputsFromSelectedUser();
+  });
+}
 
-refreshUsersBtn.addEventListener("click", loadUsers);
+if (refreshUsersBtn) refreshUsersBtn.addEventListener("click", loadUsers);
 
-saveBudgetSettingsBtn.addEventListener("click", saveBudgetSettings);
-addBudgetLogBtn.addEventListener("click", addBudgetLog);
-clearBudgetCycleBtn.addEventListener("click", clearBudgetCycle);
+if (saveBudgetSettingsBtn) {
+  saveBudgetSettingsBtn.addEventListener("click", saveBudgetSettings);
+}
+if (addBudgetLogBtn) {
+  addBudgetLogBtn.addEventListener("click", addBudgetLog);
+}
+if (clearBudgetCycleBtn) {
+  clearBudgetCycleBtn.addEventListener("click", clearBudgetCycle);
+}
 
-saveProteinSettingsBtn.addEventListener("click", saveProteinSettings);
-addProteinLogBtn.addEventListener("click", addProteinLog);
-clearProteinTodayBtn.addEventListener("click", clearProteinForSelectedDate);
+if (saveProteinSettingsBtn) {
+  saveProteinSettingsBtn.addEventListener("click", saveProteinSettings);
+}
+if (addProteinLogBtn) {
+  addProteinLogBtn.addEventListener("click", addProteinLog);
+}
+if (clearProteinTodayBtn) {
+  clearProteinTodayBtn.addEventListener("click", clearProteinForSelectedDate);
+}
 
 if (editBudgetSettingsBtn) {
   editBudgetSettingsBtn.addEventListener("click", openBudgetSettingsForm);
@@ -493,7 +562,9 @@ if (editProteinSettingsBtn) {
   editProteinSettingsBtn.addEventListener("click", openProteinSettingsForm);
 }
 
-proteinLogDateInput.addEventListener("change", calculateProtein);
+if (proteinLogDateInput) {
+  proteinLogDateInput.addEventListener("change", calculateProtein);
+}
 
 setTodayChip();
 setDefaultDates();
