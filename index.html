@@ -57,69 +57,6 @@
       <section class="card">
         <div class="card-header">
           <div>
-            <p class="section-label">Budget Setup</p>
-            <h2>예산 기준 설정</h2>
-          </div>
-        </div>
-      
-        <div class="summary-inline">
-          <div class="summary-chip">
-            <span>월 예산</span>
-            <strong id="budgetSetupSummary">-</strong>
-          </div>
-          <div class="summary-chip">
-            <span>기준일</span>
-            <strong id="paydaySummary">-</strong>
-          </div>
-        </div>
-      
-        <div id="budgetSettingsForm">
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="monthlyBudget">월 예산 (원)</label>
-              <input id="monthlyBudget" type="number" inputmode="numeric" placeholder="예: 500000" />
-            </div>
-      
-            <div class="input-group">
-              <label for="payday">급여일 / 기준일 (1~28 권장)</label>
-              <input id="payday" type="number" inputmode="numeric" min="1" max="31" placeholder="예: 25" />
-            </div>
-          </div>
-      
-          <div class="button-row single-row">
-            <button class="primary-btn" id="saveBudgetSettingsBtn" type="button">예산 설정 저장</button>
-          </div>
-        </div>
-      
-        <div class="button-row single-row hidden-block" id="budgetEditWrap">
-          <button class="secondary-btn" id="editBudgetSettingsBtn" type="button">예산 설정 수정</button>
-        </div>
-      
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span>현재 예산 기간</span>
-            <strong id="budgetPeriod">-</strong>
-          </div>
-          <div class="stat-box">
-            <span>남은 일수</span>
-            <strong id="remainingDays">-</strong>
-          </div>
-          <div class="stat-box">
-            <span>이번 주기 누적 사용 금액</span>
-            <strong id="budgetUsedTotal">-</strong>
-          </div>
-        </div>
-      
-        <div class="highlight-panel budget-panel">
-          <span class="highlight-label">하루 사용 가능 금액</span>
-          <strong id="dailyBudget">-</strong>
-          <p>남은 예산을 오늘 포함 남은 일수로 나눈 값입니다. 적게 쓰면 자동으로 다음날 여유가 늘어납니다.</p>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-header">
-          <div>
             <p class="section-label">Budget Log</p>
             <h2>지출 입력</h2>
           </div>
@@ -156,45 +93,54 @@
             <strong id="budgetLogCount">-</strong>
           </div>
         </div>
+
+        <div class="stats-grid" style="margin-top: 12px;">
+          <div class="stat-box">
+            <span>현재 예산 기간</span>
+            <strong id="budgetPeriod">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>남은 일수</span>
+            <strong id="remainingDays">-</strong>
+          </div>
+          <div class="stat-box">
+            <span>이번 주기 누적 사용 금액</span>
+            <strong id="budgetUsedTotal">-</strong>
+          </div>
+        </div>
+
+        <div class="highlight-panel budget-panel">
+          <span class="highlight-label">하루 사용 가능 금액</span>
+          <strong id="dailyBudget">-</strong>
+          <p>남은 예산을 오늘 포함 남은 일수로 나눈 값입니다. 적게 쓰면 자동으로 다음날 여유가 늘어납니다.</p>
+        </div>
       </section>
 
-      <section class="card">
+      <section class="card action-card">
         <div class="card-header">
           <div>
-            <p class="section-label">Protein Setup</p>
-            <h2>단백질 목표 설정</h2>
+            <p class="section-label">Protein Log</p>
+            <h2>단백질 섭취 입력</h2>
           </div>
         </div>
-      
-        <div class="summary-inline">
-          <div class="summary-chip">
-            <span>하루 목표 단백질</span>
-            <strong id="proteinTargetSummary">-</strong>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label for="proteinLogAmount">이번 섭취량 (g)</label>
+            <input id="proteinLogAmount" type="number" inputmode="decimal" placeholder="예: 32" />
+          </div>
+
+          <div class="input-group">
+            <label for="proteinLogDate">섭취 날짜</label>
+            <input id="proteinLogDate" type="date" />
           </div>
         </div>
-      
-        <div id="proteinSettingsForm">
-          <div class="form-grid">
-            <div class="input-group">
-              <label for="proteinTarget">하루 목표 단백질 (g)</label>
-              <input id="proteinTarget" type="number" inputmode="decimal" placeholder="예: 140" />
-            </div>
-      
-            <div class="input-group">
-              <label for="proteinLogDate">섭취 날짜</label>
-              <input id="proteinLogDate" type="date" />
-            </div>
-          </div>
-      
-          <div class="button-row single-row">
-            <button class="primary-btn" id="saveProteinSettingsBtn" type="button">단백질 목표 저장</button>
-          </div>
+
+        <div class="button-row">
+          <button class="primary-btn" id="addProteinLogBtn" type="button">단백질 추가</button>
+          <button class="secondary-btn" id="clearProteinTodayBtn" type="button">선택 날짜 단백질 초기화</button>
         </div>
-      
-        <div class="button-row single-row hidden-block" id="proteinEditWrap">
-          <button class="secondary-btn" id="editProteinSettingsBtn" type="button">단백질 목표 수정</button>
-        </div>
-      
+
         <div class="stats-grid">
           <div class="stat-box">
             <span>목표량</span>
@@ -220,37 +166,77 @@
           </div>
           <p>같은 날짜에 여러 번 입력하면 자동으로 누적됩니다.</p>
         </div>
-      </section>
-
-      <section class="card action-card">
-        <div class="card-header">
-          <div>
-            <p class="section-label">Protein Log</p>
-            <h2>단백질 섭취 입력</h2>
-          </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="input-group">
-            <label for="proteinLogAmount">이번 섭취량 (g)</label>
-            <input id="proteinLogAmount" type="number" inputmode="decimal" placeholder="예: 32" />
-          </div>
-
-          <div class="input-group">
-            <label>&nbsp;</label>
-            <div class="placeholder-box">입력 후 저장하면 선택 날짜 기준 누적됩니다.</div>
-          </div>
-        </div>
-
-        <div class="button-row">
-          <button class="primary-btn" id="addProteinLogBtn" type="button">단백질 추가</button>
-          <button class="secondary-btn" id="clearProteinTodayBtn" type="button">선택 날짜 단백질 초기화</button>
-        </div>
 
         <p class="info-text">
           사용자 목록은 <code>users.json</code> 에서 읽고, 실제 예산/단백질 데이터는 각 기기의 브라우저에 저장됩니다.
         </p>
       </section>
+
+      <!-- 숨김 유지용 요소: script.js 오류 방지 -->
+      <div class="hidden-block" aria-hidden="true">
+        <!-- Budget setup hidden -->
+        <section class="card">
+          <div class="summary-inline">
+            <div class="summary-chip">
+              <span>월 예산</span>
+              <strong id="budgetSetupSummary">-</strong>
+            </div>
+            <div class="summary-chip">
+              <span>기준일</span>
+              <strong id="paydaySummary">-</strong>
+            </div>
+          </div>
+
+          <div id="budgetSettingsForm">
+            <div class="form-grid">
+              <div class="input-group">
+                <label for="monthlyBudget">월 예산 (원)</label>
+                <input id="monthlyBudget" type="number" inputmode="numeric" placeholder="예: 500000" />
+              </div>
+
+              <div class="input-group">
+                <label for="payday">급여일 / 기준일 (1~28 권장)</label>
+                <input id="payday" type="number" inputmode="numeric" min="1" max="31" placeholder="예: 25" />
+              </div>
+            </div>
+
+            <div class="button-row single-row">
+              <button class="primary-btn" id="saveBudgetSettingsBtn" type="button">예산 설정 저장</button>
+            </div>
+          </div>
+
+          <div class="button-row single-row hidden-block" id="budgetEditWrap">
+            <button class="secondary-btn" id="editBudgetSettingsBtn" type="button">예산 설정 수정</button>
+          </div>
+        </section>
+
+        <!-- Protein setup hidden -->
+        <section class="card">
+          <div class="summary-inline">
+            <div class="summary-chip">
+              <span>하루 목표 단백질</span>
+              <strong id="proteinTargetSummary">-</strong>
+            </div>
+          </div>
+
+          <div id="proteinSettingsForm">
+            <div class="form-grid">
+              <div class="input-group">
+                <label for="proteinTarget">하루 목표 단백질 (g)</label>
+                <input id="proteinTarget" type="number" inputmode="decimal" placeholder="예: 140" />
+              </div>
+            </div>
+
+            <div class="button-row single-row">
+              <button class="primary-btn" id="saveProteinSettingsBtn" type="button">단백질 목표 저장</button>
+            </div>
+          </div>
+
+          <div class="button-row single-row hidden-block" id="proteinEditWrap">
+            <button class="secondary-btn" id="editProteinSettingsBtn" type="button">단백질 목표 수정</button>
+          </div>
+        </section>
+      </div>
     </main>
   </div>
 
